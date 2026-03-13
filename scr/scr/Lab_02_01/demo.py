@@ -72,7 +72,7 @@ def main():
 
     print("\n🔹 Изменение ФИО через сеттер:")
     print(f"   Текущее ФИО: {student1.fio}")
-    student1.fio = "Маки Дзенин обвлено)"
+    student1.fio = "Маки Дзенин обновлено)"
     print(f"   Новое ФИО: {student1.fio}")
 
     print_separator("ПРОВЕРКА РАБОТЫ ОГРАНИЧЕНИЙ (TRY/EXCEPT)")
