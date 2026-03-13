@@ -48,4 +48,4 @@
 markdown
 
 ### Сценарий 1
-[Lab_02_01](images/Lab_02_01)
+![Бизнес метод, +общее .png](images/Lab_02_01/%D0%91%D0%B8%D0%B7%D0%BD%D0%B5%D1%81%20%D0%BC%D0%B5%D1%82%D0%BE%D0%B4%2C%20%2B%D0%BE%D0%B1%D1%89%D0%B5%D0%B5%20.png)
