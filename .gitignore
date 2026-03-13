@@ -1,0 +1,9 @@
+# IDE
+.idea/
+*.iws
+*.iml
+
+# Virtual environments
+.venv/
+venv/
+env/
