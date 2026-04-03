@@ -1,4 +1,5 @@
-from model import Student
+from model import Student, StudentStatus
+from datetime import datetime
 
 
 def print_separator(title: str, char: str = "=") -> None:
@@ -11,13 +12,6 @@ def print_separator(title: str, char: str = "=") -> None:
 def main():
     """Основная функция демонстрации"""
 
-    print_separator("ДЕМОНСТРАЦИЯ АТРИБУТОВ КЛАССА")
-
-    # Доступ к атрибуту класса через класс
-    print(f" Университет (через класс): {Student.university_name}")
-    print(f" Всего студентов (через класс): {Student.total_students}")
-
-    # Создание студентов
     print_separator("СОЗДАНИЕ СТУДЕНТОВ")
 
     student1 = Student(
@@ -29,13 +23,6 @@ def main():
     print("✅ Создан студент 1:")
     print(student1)
 
-    print_separator("ДОСТУП К АТРИБУТАМ КЛАССА ЧЕРЕЗ ЭКЗЕМПЛЯР")
-
-    # Доступ к атрибуту класса через экземпляр
-    print(f"Университет (через экземпляр): {student1.university_name}")
-    print(f"Всего студентов (через экземпляр): {student1.total_students}")
-
-    # Создание второго студента
     student2 = Student(
         fio="Петрова Анна Сергеевна",
         birthdate="2004-03-20",
@@ -45,108 +32,136 @@ def main():
     print("\n✅ Создан студент 2:")
     print(student2)
 
-    print_separator("ПРОВЕРКА АТРИБУТА КЛАССА ПОСЛЕ СОЗДАНИЯ СТУДЕНТОВ")
-
-    print(f"Всего студентов (через класс): {Student.total_students}")
-    print(f"Всего студентов (через student1): {student1.total_students}")
-    print(f"Всего студентов (через student2): {student2.total_students}")
-
-    print_separator("ДЕМОНСТРАЦИЯ __repr__")
-
-    print("repr(student1):")
-    print(repr(student1))
-    print("\nrepr(student2):")
-    print(repr(student2))
-
-    print_separator("ДЕМОНСТРАЦИЯ СЕТТЕРОВ С ВАЛИДАЦИЕЙ")
-
-    print("🔹 Изменение GPA через сеттер:")
-    print(f"   Текущий GPA: {student1.gpa}")
-    student1.gpa = 4.75
-    print(f"   Новый GPA после изменения: {student1.gpa}")
-
-    print("\n🔹 Изменение группы через сеттер:")
-    print(f"   Текущая группа: {student1.group}")
-    student1.group = "БИВТ-22-2"
-    print(f"   Новая группа: {student1.group}")
-
-    print("\n🔹 Изменение ФИО через сеттер:")
-    print(f"   Текущее ФИО: {student1.fio}")
-    student1.fio = "Маки Дзенин обновлено)"
-    print(f"   Новое ФИО: {student1.fio}")
-
-    print_separator("ПРОВЕРКА РАБОТЫ ОГРАНИЧЕНИЙ (TRY/EXCEPT)")
+    print_separator("ДЕМОНСТРАЦИЯ ВАЛИДАЦИИ (ОТДЕЛЬНЫЙ МОДУЛЬ)")
 
     test_cases = [
-        ("ФИО слишком короткое", "Ив", "", ""),
-        ("ФИО без фамилии", "Иван", "", ""),
+        ("ФИО слишком короткое", "Ив", "2000-01-01", "БИВТ-21-1", 4.5),
+        ("ФИО с цифрами", "Иванов123", "2000-01-01", "БИВТ-21-1", 4.5),
         ("Группа неверного формата", "Иванов Иван", "2000-01-01", "ГРП101", 4.5),
-        ("GPA слишком низкий", "Иванов Иван", "2000-01-01", "БИВТ-21-1", 1.5),
-        ("GPA слишком высокий", "Иванов Иван", "2000-01-01", "БИВТ-21-1", 5.5),
-        ("GPA с тремя знаками", "Иванов Иван", "2000-01-01", "БИВТ-21-1", 4.567),
-        ("Дата в будущем", "Иванов Иван", "2027-01-01", "БИВТ-21-1", 4.5),
+        ("GPA выше 5", "Иванов Иван", "2000-01-01", "БИВТ-21-1", 5.5),
+        ("Дата в будущем", "Иванов Иван", "2026-01-01", "БИВТ-21-1", 4.5),
         ("Возраст меньше 16", "Иванов Иван", "2015-01-01", "БИВТ-21-1", 4.5),
     ]
 
-    for description, fio, birthdate, group, *gpa in test_cases:
-        print(f"\nТест: {description}")
+    for description, fio, birthdate, group, gpa in test_cases:
+        print(f"\n Тест: {description}")
         try:
-            if gpa:
-                Student(fio=fio, birthdate=birthdate, group=group, gpa=gpa[0])
-            else:
-                Student(fio=fio, birthdate=birthdate, group=group, gpa=4.5)
-            print(f"   ✅ Успех (не должно было случиться!)")
+            Student(fio=fio, birthdate=birthdate, group=group, gpa=gpa)
+            print(f"   ❌ Ошибка: тест должен был провалиться")
         except ValueError as e:
-            print(f"   ❌ Ошибка (ожидаемо): {e}")
+            print(f"   ✅ Валидация сработала: {e}")
 
-    print_separator("ДЕМОНСТРАЦИЯ ВТОРОГО БИЗНЕС-МЕТОДА (get_gpa_grade)")
+    print_separator("ДЕМОНСТРАЦИЯ МЕТОДОВ ИЗМЕНЕНИЯ СОСТОЯНИЯ")
 
-    test_gpas = [2.3, 3.2, 4.1, 4.9, 5.0]
-    for i, gpa_value in enumerate(test_gpas, 1):
-        try:
-            temp_student = Student(
-                fio=f"Тестов Тест{i}",
-                birthdate="2000-01-01",
-                group="БИВТ-21-1",
-                gpa=gpa_value
-            )
-            print(f"   GPA: {gpa_value:.2f} → Оценка: {temp_student.get_gpa_grade()}")
-        except ValueError as e:
-            print(f"   GPA: {gpa_value:.2f} → Ошибка: {e}")
+    # Создаем студента для демонстрации
+    demo_student = Student(
+        fio="Сидоров Петр Алексеевич",
+        birthdate="2006-12-01",
+        group="ПМИ-22-3",
+        gpa=4.2
+    )
+    print("Исходный студент:")
+    print(demo_student)
 
-    print_separator("ДЕМОНСТРАЦИЯ ВСЕХ ВОЗМОЖНОСТЕЙ")
+    print("\n🔹 1. Попытка повысить курс (успешно):")
+    demo_student.upgrade_course()
+    print(f"   Текущий курс: {demo_student.course}")
 
-    # Создаем показательного студента
-    best_student = Student(
-        fio="Смирнова Екатерина Алексеевна",
-        birthdate="2003-11-07",
-        group="БИВТ-20-1",
-        gpa=4.98
+    print("\n🔹 2. Отправляем в академический отпуск:")
+    demo_student.take_academic_leave()
+    print(f"   Статус: {demo_student.status.value}")
+
+    print("\n🔹 3. Попытка повысить курс в отпуске (ДОЛЖНА БЫТЬ ОШИБКА):")
+    try:
+        demo_student.upgrade_course()
+    except ValueError as e:
+        print(f"   ❌ Ошибка (ожидаемо): {e}")
+
+    print("\n🔹 4. Активируем студента обратно:")
+    demo_student.activate()
+    print(f"   Статус: {demo_student.status.value}")
+
+    print("\n🔹 Повышаем курс до максимума:")
+    for _ in range(Student.MAX_COURSE):
+        if demo_student.course >= Student.MAX_COURSE:
+            break
+        demo_student.upgrade_course()
+    print(f"   Финальный курс: {demo_student.course}")
+
+    print("\n🔹 6. Попытка повысить курс выше {Student.MAX_COURSE}:")
+    try:
+        demo_student.upgrade_course()
+    except ValueError as e:
+        print(f"   ❌ Ошибка (ожидаемо): {e}")
+
+    print("\n🔹 7. Выпускаем студента:")
+    demo_student.graduate()
+    print(f"   Статус: {demo_student.status.value}")
+
+    print("\n🔹 8. Попытка изменить GPA выпускника (ДОЛЖНА БЫТЬ ОШИБКА):")
+    try:
+        demo_student.add_points(0.5)
+    except ValueError as e:
+        print(f"   ❌ Ошибка (ожидаемо): {e}")
+
+    print_separator("ДЕМОНСТРАЦИЯ РАБОТЫ С ОТЧИСЛЕНИЕМ")
+
+    expelled_student = Student(
+        fio="Васильев Василий",
+        birthdate="2004-07-20",
+        group="БИВТ-21-3",
+        gpa=2.5
+    )
+    print("Создан студент с низким GPA:")
+    print(expelled_student)
+
+    print("\n🔹 Отчисляем студента за неуспеваемость:")
+    expelled_student.expel(reason="Академическая неуспеваемость")
+    print(f"   Статус: {expelled_student.status.value}")
+
+    print("\n🔹 Попытка повысить курс отчисленного (ДОЛЖНА БЫТЬ ОШИБКА):")
+    try:
+        expelled_student.upgrade_course()
+    except ValueError as e:
+        print(f"   ❌ Ошибка (ожидаемо): {e}")
+
+    print_separator("ДЕМОНСТРАЦИЯ АТРИБУТОВ КЛАССА")
+
+    print(f" Университет: {Student.university_name}")
+    print(f" Всего студентов: {Student.total_students}")
+    print(f" Максимальный курс: {Student.MAX_COURSE}")
+
+    print_separator("ДЕМОНСТРАЦИЯ БИЗНЕС-МЕТОДОВ")
+
+    test_student = Student(
+        fio="Тестовый Студент",
+        birthdate="2003-01-15",
+        group="БИВТ-21-4",
+        gpa=4.35
     )
 
-    print("🏆 Лучший студент:")
-    print(best_student)
+    print(f"Возраст: {test_student.get_age()} лет")
+    print(f"Буквенная оценка: {test_student.get_gpa_grade()}")
+    print(f"Студенческий билет: {test_student.get_student_card()}")
 
-    print("\n Детальная информация:")
-    print(f"   • Возраст: {best_student.get_age()} лет")
-    print(f"   • Курс: {best_student.course}")
-    print(f"   • Буквенная оценка: {best_student.get_gpa_grade()}")
-    print(f"   • Студенческий билет: {best_student.get_student_card()}")
+    print_separator("ДЕМОНСТРАЦИЯ МАГИЧЕСКИХ МЕТОДОВ")
 
-    print_separator("ИЗМЕНЕНИЕ АТРИБУТА КЛАССА")
+    print("__str__:")
+    print(test_student)
 
-    print(f" Текущий университет: {Student.university_name}")
-    Student.university_name = "МГТУ им. Баумана"
-    print(f" Новый университет (после изменения): {Student.university_name}")
+    print("\n__repr__:")
+    print(repr(test_student))
 
-    # Проверяем, что изменилось у всех студентов
-    print(f" У student1: {student1.university_name}")
-    print(f" У best_student: {best_student.university_name}")
+    student_copy = Student(
+        fio="Тестовый Студент",
+        birthdate="2003-01-15",
+        group="ДРУГАЯ-99-9",
+        gpa=3.0
+    )
+    print(f"\n__eq__: {test_student == student_copy}")
 
     print_separator("ИТОГОВАЯ СТАТИСТИКА")
-
-    print(f" Всего создано студентов: {Student.total_students}")
-    print(f" Демонстрация завершена")
+    print(f"👥 Всего создано студентов: {Student.total_students}")
 
 
 if __name__ == "__main__":

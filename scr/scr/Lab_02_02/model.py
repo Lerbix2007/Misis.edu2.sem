@@ -1,9 +1,15 @@
 from datetime import datetime
 from typing import Optional, Union
 from enum import Enum
+from pathlib import Path
+import sys
+current_file = Path(__file__).resolve()           # .../scr/Lab_02_02/model.py
+project_root = current_file.parent.parent         # .../scr/
 
+sys.path.insert(0, str(project_root))
 
-from validate import (
+# Импорт из Lab_02_01/validate.py
+from Lab_02_01.validate import (
     validate_fio,
     validate_birthdate,
     validate_group,
@@ -67,17 +73,17 @@ class Student:
         age = self.get_age()
 
         if age < 17:
-            return 0  # еще не студент
-        elif age == 17:
+            return 0  # абитуриент
+        elif 17 <= age <= 18:
             return 1
-        elif age == 18:
+        elif 18 <= age <= 19:
             return 2
-        elif age == 19:
+        elif 19 <= age <= 20:
             return 3
-        elif age >= 20:
-            return 4  # максимум 4 курс
+        elif 20 <= age <= 21:
+            return 4
         else:
-            return 1
+            return 5  # выпускник или магистр
 
     # === СВОЙСТВА (GETTERS) ===
 
@@ -202,6 +208,7 @@ class Student:
     def upgrade_course(self) -> None:
         """
         Повысить курс студента (перевести на следующий курс)
+        ПОВЕДЕНИЕ ЗАВИСИТ ОТ СОСТОЯНИЯ
         """
         # ПРОВЕРКА СОСТОЯНИЯ - поведение ограничено
         if not self.is_active:
@@ -211,12 +218,12 @@ class Student:
             )
         if self._course >= Student.MAX_COURSE:
             raise ValueError(
-                f"❌ Нельзя повысить курс студента {self._fio}, "
-                f"так как он уже на {self._course} курсе. "
-                f"Максимальный курс: {Student.MAX_COURSE}"
+                f"Нельзя повысить курс студента {self._fio}, так как он уже на {self._course} курсе. "
+                f"Максимальный курс бакалавриата: {Student.MAX_COURSE}"
             )
         # Используем валидацию из модуля
-        self._course += 1
+        new_course = validate_course_upgrade(self._course, Student.MAX_COURSE)
+        self._course = new_course
         print(f"📈 Студент {self._fio} переведен на {self._course} курс")
 
     def add_points(self, points: float) -> None:
@@ -275,12 +282,12 @@ class Student:
         return (
             f"┌─ СТУДЕНТ {'=' * 50}\n"
             f"│ {status_icon} ФИО: {self._fio}\n"
-            f"│ 🎂 Дата рождения: {self.birthdate} (возраст: {self.get_age()} лет)\n"
-            f"│ 📚 Группа: {self._group} (курс: {self.course})\n"
-            f"│ 📊 Средний балл: {self._gpa:.2f} → {self.get_gpa_grade()}\n"
-            f"│ 🆔 Студенческий билет: {self.get_student_card()}\n"
-            f"│ 🏫 Университет: {Student.university_name}\n"
-            f"│ 📍 Статус: {self._status.value}\n"
+            f"│ Дата рождения: {self.birthdate} (возраст: {self.get_age()} лет)\n"
+            f"│ Группа: {self._group} (курс: {self.course})\n"
+            f"│ Средний балл: {self._gpa:.2f} → {self.get_gpa_grade()}\n"
+            f"│ Студенческий билет: {self.get_student_card()}\n"
+            f"│ Университет: {Student.university_name}\n"
+            f"│ Статус: {self._status.value}\n"
             f"└─{'─' * 60}"
         )
 
