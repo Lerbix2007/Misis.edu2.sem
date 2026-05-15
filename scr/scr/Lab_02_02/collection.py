@@ -5,6 +5,78 @@ from model import Student, StudentStatus
 
 class StudentCollection:
 
+    def filter_by(self, predicate: Callable[[Student], bool]) -> "StudentCollection":
+        """
+        Отфильтровать коллекцию по переданной функции-предикату.
+
+        Args:
+            predicate: функция, которая принимает объект Student
+                       и возвращает True или False
+
+        Returns:
+            Новая коллекция StudentCollection с подходящими студентами
+
+        Example:
+            active_students = collection.filter_by(is_active)
+        """
+        if not callable(predicate):
+            raise TypeError("predicate должен быть вызываемым объектом")
+
+        filtered_items = [
+            student for student in self._items
+            if predicate(student)
+        ]
+
+        return StudentCollection(filtered_items)
+
+    def sort_by(
+        self,
+        key_func: Callable[[Student], Any],
+        reverse: bool = False
+    ) -> "StudentCollection":
+        """
+        Отсортировать коллекцию по переданной стратегии сортировки.
+
+        Args:
+            key_func: функция, которая принимает Student
+                      и возвращает ключ сортировки
+            reverse: если True, сортировка по убыванию
+
+        Returns:
+            Новая отсортированная коллекция StudentCollection
+
+        Example:
+            sorted_students = collection.sort_by(by_gpa, reverse=True)
+        """
+        if not callable(key_func):
+            raise TypeError("key_func должен быть вызываемым объектом")
+
+        sorted_items = sorted(
+            self._items,
+            key=key_func,
+            reverse=reverse
+        )
+
+        return StudentCollection(sorted_items)
+
+    def apply(self, func: Callable[[Student], Any]) -> List[Any]:
+        """
+        Применить произвольную функцию ко всем элементам коллекции.
+
+        Args:
+            func: функция или callable-объект, который принимает Student
+
+        Returns:
+            Список результатов применения функции
+
+        Example:
+            collection.apply(lambda student: student.upgrade_course())
+            collection.apply(student_to_short_string)
+        """
+        if not callable(func):
+            raise TypeError("func должен быть вызываемым объектом")
+
+        return [func(student) for student in self._items]
 
     def __init__(self, items: Optional[List[Student]] = None):
         """

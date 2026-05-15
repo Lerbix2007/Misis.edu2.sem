@@ -227,18 +227,19 @@ class Student:
         print(f"📈 Студент {self._fio} переведен на {self._course} курс")
 
     def add_points(self, points: float) -> None:
-        """
-        Добавить баллы к GPA (поведение зависит от состояния)
-        """
-        # ПОВЕДЕНИЕ ЗАВИСИТ ОТ СОСТОЯНИЯ
-        if self._status == StudentStatus.GRADUATED:
-            raise ValueError("Нельзя изменять GPA выпущенного студента")
+        if not isinstance(points, (int, float)):
+            raise TypeError("Количество баллов должно быть числом")
 
-        if self._status == StudentStatus.EXPELLED:
-            raise ValueError("Нельзя изменять GPA отчисленного студента")
+        if not self.is_active:
+            raise ValueError("Нельзя изменить GPA неактивного студента")
 
         new_gpa = self._gpa + points
-        # Валидация через модуль
+
+        if new_gpa > 5:
+            new_gpa = 5.0
+
+        new_gpa = round(new_gpa, 2)
+
         self._gpa = validate_gpa(new_gpa)
         print(f"⭐ GPA студента {self._fio} изменен: {self._gpa:.2f}")
 
