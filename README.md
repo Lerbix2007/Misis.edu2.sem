@@ -3,3 +3,5 @@
 # README для 3 лабы [README.md](scr/scr/Lab_02_03/README.md)
 # README для 4 лабы [README.md](scr/scr/Lab_02_04/README.md)
 # README для 5 лабы [README.md](scr/scr/Lab_02_05/README.md)
+# README для 6 лабы [README.md](scr/scr/Lab_02_06/README.md)
+# README для 7 лабы [README.md](scr/scr/Lab_02_07/README.md)
