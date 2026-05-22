@@ -4,6 +4,9 @@ from model import Student, StudentStatus
 
 
 class StudentCollection:
+    def is_empty(self) -> bool:
+        """Проверить, пуста ли коллекция."""
+        return len(self._items) == 0
 
     def filter_by(self, predicate: Callable[[Student], bool]) -> "StudentCollection":
         """
